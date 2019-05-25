@@ -102,9 +102,6 @@ friends: [
         title: "Baidu",
         href: "https://www.baidu.com/"
     },{
-        title: "Tencent-cloud",
-        href: "https://cloud.tencent.com/"
-    },{
         title: "Github",
         href: "https://github.com/"
     },{

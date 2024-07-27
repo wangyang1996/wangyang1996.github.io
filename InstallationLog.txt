@@ -1,0 +1,12 @@
+************************************* Invoked: 周六 7月 27 15:20:20 2024
+[0] Arguments: C:\Users\Administrator\AppData\Local\Temp\msys2-x86_64-20221028.exe
+[10] Operations sanity check succeeded.
+[11] Warning: 无法创建锁定文件“C:\Users\Administrator\AppData\Local\Temp\msys2-x86_64-202210281234865.lock”：另一个程序正在使用此文件，进程无法访问。
+ (0x00000020)
+[18] UnableToStart : 无法启动安装程序 : 另一个 msys2-x86_64-20221028 实例已运行。 请等待至完成、关闭或重新启动系统。
+************************************* Invoked: 周六 7月 27 15:20:29 2024
+[0] Arguments: C:\Users\Administrator\AppData\Local\Temp\msys2-x86_64-20221028.exe
+[12] Operations sanity check succeeded.
+[13] Warning: 无法创建锁定文件“C:\Users\Administrator\AppData\Local\Temp\msys2-x86_64-202210281234865.lock”：另一个程序正在使用此文件，进程无法访问。
+ (0x00000020)
+[20] UnableToStart : 无法启动安装程序 : 另一个 msys2-x86_64-20221028 实例已运行。 请等待至完成、关闭或重新启动系统。

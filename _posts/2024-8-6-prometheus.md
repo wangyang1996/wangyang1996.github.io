@@ -89,8 +89,8 @@ alert.yml配置告警
     labels:
       severity: critical
     annotations:
-      summary: "redis异常，实例：{{$labels.instance}}"
-      description: "{{$labels.job}} redis已关闭"
+      summary: "redis异常，实例：\{\{$labels.instance\}\}"
+      description: "\{\{$labels.job\}\} redis已关闭"
 ```
 
 检查配置

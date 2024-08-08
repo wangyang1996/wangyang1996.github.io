@@ -48,11 +48,11 @@ daemonize -c /usr/local/prometheus/prometheus-2.52.0.linux-amd64/ /usr/local/pro
 chmod +x /etc/rc.local
 ```
 
-访问地址：http://xx.xx.xx.xx:9090/graph
+访问地址：`http://xx.xx.xx.xx:9090/graph`
 
 ### 1.3 node_exporter安装
 
-node_exporter 安装到被监视节点，prometheus通过接口http://xx.xx.xx.xx:9100/metrics获取采集数据
+node_exporter 安装到被监视节点，prometheus通过接口`http://xx.xx.xx.xx:9100/metrics`获取采集数据
 
 	wget node_exporter-1.8.1.linux-amd64.tar.gz
 	tar -zxvf node_exporter-1.8.1.linux-amd64.tar.gz
@@ -76,6 +76,13 @@ scrape_configs:
   - job_name: "node_exporter"
     static_configs:
       - targets: ["localhost:9100","localhost:9200"]
+```
+
+prometheus.yml 配置alert.yml文件地址(相对路径)
+
+```
+rule_files:
+  - "alert.yml"
 ```
 
 alert.yml配置告警
@@ -116,12 +123,76 @@ curl -X POST http://localhost:9090/-/reload
     service grafana-server start
     service grafana-server status
 
-访问地址：http://xx.xx.xx.xx:3000
+访问地址：`http://xx.xx.xx.xx:3000`
 
-- 设置prometheus数据源 Home > Connections > Data sources > Add data source
-- 建立dashboard视图，或者从grafana 市场上拷贝ID模版https://grafana.com/grafana/dashboards/11835/，grafana导入模版生效
+- 设置prometheus数据源 `Home > Connections > Data sources > Add data source`
+- 建立dashboard视图，或者从grafana 市场上拷贝ID模版`https://grafana.com/grafana/dashboards/11835/`，grafana导入模版生效
 
- 
+
+
+## 3.prometheus+grafana 基础服务实战
+
+### 3.1 ngnix监控
+
+1. `nginx -V 2>&1 | grep -o with-http_stub_status_module`   检查是否安装该模块
+
+2. nginx.conf文件server模块添加配置
+
+   ```
+   location /stub_status {
+   	stub_status on;
+   	access_log off;
+   	allow 0.0.0.0/0;
+   	deny all;
+   }
+   ```
+
+3. nginx重新加载配置
+
+   ```
+   nginx -t
+   nginx -s reload
+   curl http://xx.xx.xx.xx/stub_status 
+   ```
+
+4. nginx 安装对应exporter模块
+
+   `image:nginx/nginx-prometheus-exporter`
+
+5. Docker启动nginx_exporter容器
+
+   `docker run -d --name nginx-exporter -p 9113:9113 nginx/nginx-prometheus-exporter -nginx.scrape-uri=http://xx.xx.xx.xx/stub_status`    注意参数
+
+6. `http://xx.xx.xx.xx:9113/metrics`     获取nginx相关采集数据
+
+7. prometheus.yml  先添加 job_name 地址
+
+   ```
+    - job_name: "nginx_exporter"
+       static_configs:
+         - targets: ["xx.xx.xx.xx:9113"]
+   ```
+
+8. alert.yml  添加触发器配置信息
+
+   ```
+   - name: nginx
+     rules:
+     - alert: NginxDown
+       expr: nginx_up == 0
+       for: 30s
+       labels: 
+         severity: critical
+       annotations:
+         summary: "nginx异常，实例：\{\{$labels.instance\}\}"
+         description: "\{\{$labels.job\}\} nginx已关闭"
+   ```
+
+9. `./promtool check config prometheus.yml`   检查配置
+
+10. `curl -X POST http://localhost:9090/-/reload`      prometheus重新加载配置文件
+
+11. grafana 市场上拷贝ID 模版`https://grafana.com/grafana/dashboards/12708-nginx/`，grafana导入模版。
 
 
 
